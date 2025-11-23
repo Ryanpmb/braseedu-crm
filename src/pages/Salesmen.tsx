@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Edit } from "lucide-react";
+import { SalesmanDialog } from "@/components/Dialogs/SalesmanDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Salesmen = () => {
+  const [salesmanDialogOpen, setSalesmanDialogOpen] = useState(false);
+  const [selectedSalesman, setSelectedSalesman] = useState<any>(null);
+
   // Mock data
   const salesmen = [
     { 
@@ -41,6 +46,11 @@ const Salesmen = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
+  const handleEditSalesman = (salesman: any) => {
+    setSelectedSalesman(salesman);
+    setSalesmanDialogOpen(true);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -51,7 +61,13 @@ const Salesmen = () => {
               Gerencie sua equipe de vendas
             </p>
           </div>
-          <Button className="gap-2">
+          <Button 
+            className="gap-2"
+            onClick={() => {
+              setSelectedSalesman(null);
+              setSalesmanDialogOpen(true);
+            }}
+          >
             <Plus className="w-4 h-4" />
             Novo Vendedor
           </Button>
@@ -69,18 +85,27 @@ const Salesmen = () => {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {salesmen.map((salesman) => (
-            <Card key={salesman.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card key={salesman.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {getInitials(salesman.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{salesman.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{salesman.department}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {getInitials(salesman.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{salesman.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{salesman.department}</p>
+                    </div>
                   </div>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => handleEditSalesman(salesman)}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -107,6 +132,12 @@ const Salesmen = () => {
           ))}
         </div>
       </div>
+
+      <SalesmanDialog 
+        open={salesmanDialogOpen} 
+        onOpenChange={setSalesmanDialogOpen}
+        salesman={selectedSalesman}
+      />
     </DashboardLayout>
   );
 };
