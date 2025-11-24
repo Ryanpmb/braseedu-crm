@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import LandingNav from "@/components/Layout/LandingNav";
 import { Search, Clock, Users, Star } from "lucide-react";
 
 const CoursesPublic = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Mock data - substituir pela API real
@@ -146,7 +148,7 @@ const CoursesPublic = () => {
                 </CardContent>
                 <CardFooter className="flex items-center justify-between">
                   <span className="text-2xl font-bold text-primary">{course.price}</span>
-                  <Button>Ver Detalhes</Button>
+                  <Button onClick={() => navigate(`/course/${course.id}`)}>Ver Detalhes</Button>
                 </CardFooter>
               </Card>
             ))}
