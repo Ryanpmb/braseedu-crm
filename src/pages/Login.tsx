@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
+import { api } from "@/services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,16 +14,22 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simulação de login - substituir pela API real
-    if (email && password) {
+    const response = await api.post("auth/login", { email, password }, {
+      headers: {}
+    });
+
+    if (response.status === 200) {
+      response.data.token && localStorage.setItem("token", response.data.token);
+
       toast({
         title: "Login realizado",
         description: "Bem-vindo ao sistema!",
       });
       navigate("/dashboard");
+      
     } else {
       toast({
         title: "Erro no login",
