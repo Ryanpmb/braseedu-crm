@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/customers", icon: Users, label: "Clientes" },
   { to: "/opportunities", icon: Target, label: "Oportunidades" },
   { to: "/sales", icon: DollarSign, label: "Vendas" },

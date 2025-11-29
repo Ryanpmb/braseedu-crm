@@ -1,10 +1,24 @@
-import axios from 'axios';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 export const api = axios.create({
     baseURL: 'http://localhost:8080/',
     timeout: 10000,
-    headers: {
-        'Content-Type': 'application/json',
-         'Authorization': 'Bearer ' + localStorage.getItem('token') || '',
-    },
-})
+});
+
+api.interceptors.response.use(async (response: AxiosResponse): Promise<AxiosResponse> => {
+    if (response.status === 403) {
+        localStorage.removeItem('token');
+        window.location.href = location.pathname + '/';
+    }
+
+    return response;
+});
+
+api.interceptors.request.use(async (request: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        request.headers.Authorization = `Bearer ` + token;
+    }
+
+    return request;
+});

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,37 +18,57 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 interface CustomerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   customer?: any;
+  customers?: any[];
 }
 
-export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogProps) => {
+export const CustomerDialog = ({ open, onOpenChange, customer, customers }: CustomerDialogProps) => {
+
   const [formData, setFormData] = useState({
-    name: customer?.name || "",
-    email: customer?.email || "",
-    phone: customer?.phone || "",
-    birthDate: customer?.birthDate || "",
-    leadStatus: customer?.leadStatus || "Novo Lead",
-    origin: customer?.origin || "",
+    name: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    leadStatus: "NEW",
+    origin: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (customer) {
+      setFormData({
+        name: customer?.name,
+        email: customer?.email,
+        phone: customer?.phone,
+        birthDate: customer?.birthDate,
+        leadStatus: customer?.leadStatus,
+        origin: customer?.origin,
+      })
+    }
+
+  }, [customer]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Aqui você faria a chamada à API
-    console.log("Dados do cliente:", formData);
-    
-    toast({
-      title: customer ? "Cliente atualizado!" : "Cliente criado!",
-      description: customer 
-        ? "As informações do cliente foram atualizadas com sucesso."
-        : "O novo cliente foi adicionado ao sistema.",
-    });
-    
-    onOpenChange(false);
+
+    const response = customer ?
+      await api.put('customers/' + customer.id, formData) :
+      await api.post('customers', formData);
+
+    if (response.status === 200) {
+      toast({
+        title: customer ? "Cliente atualizado!" : "Cliente criado!",
+        description: customer
+          ? "As informações do cliente foram atualizadas com sucesso."
+          : "O novo cliente foi adicionado ao sistema.",
+      });
+      onOpenChange(false);
+      customers.push(response.data);
+    }
   };
 
   return (
@@ -59,7 +79,7 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
             {customer ? "Editar Cliente" : "Novo Cliente"}
           </DialogTitle>
           <DialogDescription>
-            {customer 
+            {customer
               ? "Atualize as informações do cliente abaixo."
               : "Preencha os dados para adicionar um novo cliente."}
           </DialogDescription>
@@ -74,9 +94,10 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Ex: João Silva"
                 required
+                disabled={customer}
               />
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="email">Email *</Label>
               <Input
@@ -86,9 +107,10 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="joao@email.com"
                 required
+                disabled={customer}
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="phone">Telefone *</Label>
@@ -98,9 +120,10 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="(11) 99999-9999"
                   required
+                  disabled={customer}
                 />
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="birthDate">Data de Nascimento</Label>
                 <Input
@@ -108,10 +131,11 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
                   type="date"
                   value={formData.birthDate}
                   onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                  disabled={customer}
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="leadStatus">Status do Lead *</Label>
@@ -123,15 +147,14 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Novo Lead">Novo Lead</SelectItem>
-                    <SelectItem value="Contato Realizado">Contato Realizado</SelectItem>
-                    <SelectItem value="Qualificado">Qualificado</SelectItem>
-                    <SelectItem value="Em Negociação">Em Negociação</SelectItem>
-                    <SelectItem value="Perdido">Perdido</SelectItem>
+                    <SelectItem value="NEW">Novo Lead</SelectItem>
+                    <SelectItem value="iN_PROGRESS">Em Progresso</SelectItem>
+                    <SelectItem value="WON">Ganho</SelectItem>
+                    <SelectItem value="LOSE">Perdido</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="origin">Origem</Label>
                 <Select
@@ -153,7 +176,7 @@ export const CustomerDialog = ({ open, onOpenChange, customer }: CustomerDialogP
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar

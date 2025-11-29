@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,18 +20,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { api } from "@/services/api";
 
 const Customers = () => {
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [customers, setCustomers] = useState([]);
 
-  // Mock data
-  const customers = [
-    { id: "1", name: "João Silva", email: "joao@email.com", phone: "(11) 99999-9999", status: "Qualificado", origin: "Site", registerDate: "2024-01-15" },
-    { id: "2", name: "Ana Costa", email: "ana@email.com", phone: "(11) 98888-8888", status: "Novo Lead", origin: "Facebook", registerDate: "2024-02-20" },
-    { id: "3", name: "Carlos Souza", email: "carlos@email.com", phone: "(11) 97777-7777", status: "Em Negociação", origin: "Indicação", registerDate: "2024-03-10" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/customers');
+      setCustomers(response.data)
+    }
+
+    fetchData()
+  }, []);
 
   const handleEditCustomer = (customer: any) => {
     setSelectedCustomer(customer);
@@ -68,8 +72,8 @@ const Customers = () => {
               Gerencie seus leads e clientes
             </p>
           </div>
-          <Button 
-            className="gap-2" 
+          <Button
+            className="gap-2"
             onClick={() => {
               setSelectedCustomer(null);
               setCustomerDialogOpen(true);
@@ -91,71 +95,66 @@ const Customers = () => {
         </div>
 
         <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Origem</TableHead>
-                <TableHead>Cadastro</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell className="font-medium">{customer.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{customer.email}</TableCell>
-                  <TableCell className="text-muted-foreground">{customer.phone}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className={getStatusColor(customer.status)}>
-                      {customer.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{customer.origin}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(customer.registerDate).toLocaleDateString('pt-BR')}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditCustomer(customer)}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleChangeStatus(customer)}>
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Alterar Status
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {
+            customers.length !== 0 ?
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Origem</TableHead>
+                    <TableHead>Cadastro</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {customers.map((customer) => (
+                    <TableRow key={customer.id}>
+                      <TableCell className="font-medium">{customer.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{customer.email}</TableCell>
+                      <TableCell className="text-muted-foreground">{customer.phone}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className={getStatusColor(customer.status)}>
+                          {customer.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{customer.origin}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(customer.birthDate).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditCustomer(customer)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Editar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table> :
+              <>
+                <h1 className="p-4 text-blue-500 text-lg font-bold">Nenhum Cliente Encontrado!</h1>
+              </>
+          }
         </div>
       </div>
 
-      <CustomerDialog 
-        open={customerDialogOpen} 
+      <CustomerDialog
+        open={customerDialogOpen}
         onOpenChange={setCustomerDialogOpen}
         customer={selectedCustomer}
-      />
-
-      <StatusDialog
-        open={statusDialogOpen}
-        onOpenChange={setStatusDialogOpen}
-        currentStatus={selectedCustomer?.status || ""}
-        entityType="customer"
-        onStatusChange={handleStatusChange}
+        customers={customers}
       />
     </DashboardLayout>
   );
