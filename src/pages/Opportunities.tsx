@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,19 +21,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { api } from "@/services/api";
 
 const Opportunities = () => {
   const [opportunityDialogOpen, setOpportunityDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [interactionDialogOpen, setInteractionDialogOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<any>(null);
+  const [opportunities, setOpportunities] = useState([]);
 
-  // Mock data
-  const opportunities = [
-    { id: 1, customer: "João Silva", course: "React Avançado", salesman: "Maria Santos", status: "Em Negociação", value: "R$ 2.500", initiatedAt: "2024-03-01" },
-    { id: 2, customer: "Ana Costa", course: "Node.js", salesman: "Pedro Lima", status: "Proposta Enviada", value: "R$ 1.800", initiatedAt: "2024-03-05" },
-    { id: 3, customer: "Carlos Souza", course: "Python", salesman: "Maria Santos", status: "Contato Inicial", value: "R$ 2.200", initiatedAt: "2024-03-10" },
-  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('oportunity');
+      if (response.status === 200) {
+        setOpportunities(response.data);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleEditOpportunity = (opportunity: any) => {
     setSelectedOpportunity(opportunity);
@@ -76,7 +83,7 @@ const Opportunities = () => {
               Pipeline de vendas e oportunidades ativas
             </p>
           </div>
-          <Button 
+          <Button
             className="gap-2"
             onClick={() => {
               setSelectedOpportunity(null);
@@ -99,67 +106,74 @@ const Opportunities = () => {
         </div>
 
         <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Curso</TableHead>
-                <TableHead>Vendedor</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Data Início</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {opportunities.map((opp) => (
-                <TableRow key={opp.id}>
-                  <TableCell className="font-medium">{opp.customer}</TableCell>
-                  <TableCell className="text-muted-foreground">{opp.course}</TableCell>
-                  <TableCell className="text-muted-foreground">{opp.salesman}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className={getStatusColor(opp.status)}>
-                      {opp.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium text-foreground">{opp.value}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(opp.initiatedAt).toLocaleDateString('pt-BR')}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditOpportunity(opp)}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleChangeStatus(opp)}>
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Alterar Status
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleAddInteraction(opp)}>
-                          <MessageSquare className="w-4 h-4 mr-2" />
-                          Registrar Interação
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {
+            opportunities.length !== 0 ?
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Curso</TableHead>
+                    <TableHead>Vendedor</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Valor</TableHead>
+                    <TableHead>Data Início</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {opportunities.map((opp) => (
+                    <TableRow key={opp.id}>
+                      <TableCell className="font-medium">{opp.customer}</TableCell>
+                      <TableCell className="text-muted-foreground">{opp.course}</TableCell>
+                      <TableCell className="text-muted-foreground">{opp.salesman}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className={getStatusColor(opp.status)}>
+                          {opp.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium text-foreground">{opp.value}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(opp.initiatedAt).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditOpportunity(opp)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleChangeStatus(opp)}>
+                              <RefreshCw className="w-4 h-4 mr-2" />
+                              Alterar Status
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAddInteraction(opp)}>
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              Registrar Interação
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table> :
+              <>
+                <h1 className="p-4 text-blue-500 text-lg font-bold">Nenhuma Oportunidade Encontrada!</h1>
+              </>
+          }
         </div>
       </div>
 
-      <OpportunityDialog 
-        open={opportunityDialogOpen} 
+      <OpportunityDialog
+        open={opportunityDialogOpen}
         onOpenChange={setOpportunityDialogOpen}
         opportunity={selectedOpportunity}
+        opportunities={opportunities}
       />
 
       <StatusDialog

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,56 +18,79 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 interface OpportunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   opportunity?: any;
+  opportunities: any[];
 }
 
-export const OpportunityDialog = ({ open, onOpenChange, opportunity }: OpportunityDialogProps) => {
+export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportunities }: OpportunityDialogProps) => {
   const [formData, setFormData] = useState({
     customerId: opportunity?.customerId || "",
     salesmanId: opportunity?.salesmanId || "",
     courseId: opportunity?.courseId || "",
-    status: opportunity?.status || "Contato Inicial",
-    estimatedValue: opportunity?.estimatedValue || "",
+    status: opportunity?.status || "IN_PROGRESS",
+    finished_in: new Date()
   });
+  const [customers, setCutomers] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [salesman, setSalesman] = useState([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log("Dados da oportunidade:", formData);
-    
-    toast({
-      title: opportunity ? "Oportunidade atualizada!" : "Oportunidade criada!",
-      description: opportunity 
-        ? "A oportunidade foi atualizada com sucesso."
-        : "Nova oportunidade adicionada ao pipeline.",
-    });
-    
-    onOpenChange(false);
+
+    const response = opportunity ?
+      await api.put(`oportunity/${opportunity.id}`, formData) :
+      await api.post('oportunity', formData);
+
+    if (response.status === 201) {
+
+      if (opportunity) {
+        const updateOpportunity = response.data;
+        opportunities.map((op) => {
+          op.id === updateOpportunity.id ?
+            { ...opportunity, updateOpportunity } :
+            op
+        })
+      } else {
+        const newOportunity = response.data;
+        opportunities.push(newOportunity);
+      }
+
+      toast({
+        title: opportunity ? "Oportunidade atualizada!" : "Oportunidade criada!",
+        description: opportunity
+          ? "A oportunidade foi atualizada com sucesso."
+          : "Nova oportunidade adicionada ao pipeline.",
+      });
+
+      onOpenChange(false);
+
+    }
   };
 
-  // Mock data - substituir por dados da API
-  const customers = [
-    { id: "1", name: "João Silva" },
-    { id: "2", name: "Ana Costa" },
-    { id: "3", name: "Carlos Souza" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const responseCustomers = await api.get('customers');
+      const responseCourses = await api.get('course');
+      const responseSalesman = await api.get('salesman');
 
-  const salesmen = [
-    { id: "1", name: "Maria Santos" },
-    { id: "2", name: "Pedro Lima" },
-    { id: "3", name: "Julia Costa" },
-  ];
+      if (
+        responseCustomers.status === 200
+        && responseCourses.status === 200
+        && responseSalesman.status === 200
+      ) {
+        setCutomers(responseCustomers.data);
+        setCourses(responseCourses.data);
+        setSalesman(responseSalesman.data);
+      }
+    }
 
-  const courses = [
-    { id: "1", name: "React Avançado" },
-    { id: "2", name: "Node.js" },
-    { id: "3", name: "Python" },
-    { id: "4", name: "Java Spring Boot" },
-  ];
+    fetchData();
+  },[])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -77,7 +100,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
             {opportunity ? "Editar Oportunidade" : "Nova Oportunidade"}
           </DialogTitle>
           <DialogDescription>
-            {opportunity 
+            {opportunity
               ? "Atualize as informações da oportunidade."
               : "Crie uma nova oportunidade de venda."}
           </DialogDescription>
@@ -103,7 +126,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="course">Curso *</Label>
               <Select
@@ -123,7 +146,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="salesman">Vendedor Responsável *</Label>
               <Select
@@ -135,7 +158,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
                   <SelectValue placeholder="Selecione o vendedor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {salesmen.map((salesman) => (
+                  {salesman.map((salesman) => (
                     <SelectItem key={salesman.id} value={salesman.id}>
                       {salesman.name}
                     </SelectItem>
@@ -143,7 +166,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="status">Status *</Label>
@@ -155,29 +178,15 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity }: Opportuni
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Contato Inicial">Contato Inicial</SelectItem>
-                    <SelectItem value="Qualificado">Qualificado</SelectItem>
-                    <SelectItem value="Proposta Enviada">Proposta Enviada</SelectItem>
-                    <SelectItem value="Em Negociação">Em Negociação</SelectItem>
-                    <SelectItem value="Fechado Ganho">Fechado Ganho</SelectItem>
-                    <SelectItem value="Fechado Perdido">Fechado Perdido</SelectItem>
+                    <SelectItem value="IN_PROGRESS">Em Negociação</SelectItem>
+                    <SelectItem value="WON">Fechado Ganho</SelectItem>
+                    <SelectItem value="LOSE">Fechado Perdido</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="estimatedValue">Valor Estimado</Label>
-                <Input
-                  id="estimatedValue"
-                  type="number"
-                  value={formData.estimatedValue}
-                  onChange={(e) => setFormData({ ...formData, estimatedValue: e.target.value })}
-                  placeholder="2500.00"
-                />
-              </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar

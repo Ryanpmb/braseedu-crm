@@ -35,11 +35,8 @@ export function CourseDialog({
     defaultValues: {
       name: "",
       description: "",
-      duration: "",
-      level: "",
-      price: "",
-      category: "",
-      status: "Ativo",
+      hourlyLoad: 0,
+      value: "",
     },
   });
 
@@ -48,21 +45,15 @@ export function CourseDialog({
       reset({
         name: course.name,
         description: course.description,
-        duration: course.duration,
-        level: course.level,
-        price: course.price.toString(),
-        category: course.category,
-        status: course.status,
+        hourlyLoad: course.hourlyLoad,
+        value: course.value
       });
     } else {
       reset({
         name: "",
         description: "",
-        duration: "",
-        level: "",
-        price: "",
-        category: "",
-        status: "Ativo",
+        hourlyLoad: 0,
+        value: ""
       });
     }
   }, [course, reset]);
@@ -105,67 +96,27 @@ export function CourseDialog({
             </div>
 
             <div>
-              <Label htmlFor="category">Categoria</Label>
+              <Label htmlFor="hourlyLoad">Carga horária</Label>
               <Input
-                id="category"
-                {...register("category")}
-                placeholder="Ex: Tecnologia"
+                id="hourlyLoad"
+                {...register("hourlyLoad")}
+                placeholder="Ex: 100"
+                type="number"
               />
             </div>
 
-            <div>
-              <Label htmlFor="level">Nível</Label>
-              <Select
-                value={watch("level")}
-                onValueChange={(value) => setValue("level", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o nível" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Iniciante">Iniciante</SelectItem>
-                  <SelectItem value="Intermediário">Intermediário</SelectItem>
-                  <SelectItem value="Avançado">Avançado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             <div>
-              <Label htmlFor="duration">Duração</Label>
+              <Label htmlFor="value">Preço (R$)</Label>
               <Input
-                id="duration"
-                {...register("duration")}
-                placeholder="Ex: 6 meses"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="price">Preço (R$)</Label>
-              <Input
-                id="price"
+                id="value"
                 type="number"
                 step="0.01"
-                {...register("price")}
+                {...register("value")}
                 placeholder="0.00"
               />
             </div>
-
-            <div className="col-span-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={watch("status")}
-                onValueChange={(value) => setValue("status", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Ativo">Ativo</SelectItem>
-                  <SelectItem value="Inativo">Inativo</SelectItem>
-                  <SelectItem value="Em breve">Em breve</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            
           </div>
 
           <div className="flex justify-end gap-2 pt-4">

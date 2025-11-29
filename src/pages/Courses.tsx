@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,44 +18,32 @@ import {
 import { MoreHorizontal, Plus, Pencil, Trash2 } from "lucide-react";
 import { CourseDialog } from "@/components/Dialogs/CourseDialog";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 interface Course {
   id: number;
   name: string;
   description: string;
-  duration: string;
-  level: string;
-  price: number;
-  category: string;
-  status: string;
+  hourlyLoad: number;
+  value: number;
 }
 
 export default function Courses() {
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: 1,
-      name: "Desenvolvimento Web Full Stack",
-      description: "Aprenda a criar aplicações web completas",
-      duration: "6 meses",
-      level: "Intermediário",
-      price: 2500,
-      category: "Tecnologia",
-      status: "Ativo",
-    },
-    {
-      id: 2,
-      name: "Python para Data Science",
-      description: "Domine análise de dados com Python",
-      duration: "4 meses",
-      level: "Iniciante",
-      price: 1800,
-      category: "Data Science",
-      status: "Ativo",
-    },
-  ]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('course');
+      if (response.status === 200) {
+        setCourses(response.data)
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleCreate = () => {
     setSelectedCourse(null);
@@ -67,39 +55,50 @@ export default function Courses() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setCourses(courses.filter((course) => course.id !== id));
-    toast({
-      title: "Curso excluído",
-      description: "O curso foi excluído com sucesso.",
-    });
-  };
+  const handleDelete = async (id: number) => {
+    const response = await api.delete('course/' + id)
 
-  const handleSave = (courseData: Partial<Course>) => {
-    if (selectedCourse) {
-      setCourses(
-        courses.map((course) =>
-          course.id === selectedCourse.id
-            ? { ...course, ...courseData }
-            : course
-        )
-      );
+    if (response.status === 204) {
+      setCourses(courses.filter((course) => course.id !== id));
       toast({
-        title: "Curso atualizado",
-        description: "As informações do curso foram atualizadas.",
-      });
-    } else {
-      const newCourse = {
-        ...courseData,
-        id: Math.max(...courses.map((c) => c.id)) + 1,
-      } as Course;
-      setCourses([...courses, newCourse]);
-      toast({
-        title: "Curso criado",
-        description: "O novo curso foi adicionado com sucesso.",
+        title: "Curso excluído",
+        description: "O curso foi excluído com sucesso.",
       });
     }
-    setIsDialogOpen(false);
+  };
+
+  const handleSave = async (courseData: Partial<Course>) => {
+    if (selectedCourse) {
+      const response = await api.put('course/' + selectedCourse.id, courseData);
+
+      if (response.status === 200) {
+        setCourses(
+          courses.map((course) =>
+            course.id === selectedCourse.id
+              ? { ...course, ...courseData }
+              : course
+          )
+        );
+        toast({
+          title: "Curso atualizado",
+          description: "As informações do curso foram atualizadas.",
+        });
+        setIsDialogOpen(false);
+      }
+
+    } else {
+      const response = await api.post('course', courseData);
+      if (response.status === 201) {
+        setCourses([...courses, response.data]);
+        toast({
+          title: "Curso criado",
+          description: "O novo curso foi adicionado com sucesso.",
+        });
+        setIsDialogOpen(false);
+      }
+      
+    }
+    
   };
 
   return (
@@ -127,7 +126,6 @@ export default function Courses() {
                 <TableHead>Nível</TableHead>
                 <TableHead>Duração</TableHead>
                 <TableHead>Preço</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -142,15 +140,10 @@ export default function Courses() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{course.category}</TableCell>
-                  <TableCell>{course.level}</TableCell>
-                  <TableCell>{course.duration}</TableCell>
-                  <TableCell>R$ {course.price.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-primary/10 text-primary">
-                      {course.status}
-                    </span>
-                  </TableCell>
+                  <TableCell>{course.name}</TableCell>
+                  <TableCell>{course.description}</TableCell>
+                  <TableCell>{course.hourlyLoad + 'h'}</TableCell>
+                  <TableCell>R$ {course.value.toLocaleString()}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

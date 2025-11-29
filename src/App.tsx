@@ -25,13 +25,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/courses" element={<CoursesPublic />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses-public" element={<CoursesPublic />} />
           <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="/login" element={<Login />} />
           
-          {/* Admin/Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/opportunities" element={<Opportunities />} />
