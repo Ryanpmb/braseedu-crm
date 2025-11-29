@@ -5,7 +5,8 @@ import {
   Target, 
   DollarSign, 
   UserCircle,
-  MessageSquare 
+  MessageSquare,
+  BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const navItems = [
   { to: "/sales", icon: DollarSign, label: "Vendas" },
   { to: "/salesmen", icon: UserCircle, label: "Vendedores" },
   { to: "/interactions", icon: MessageSquare, label: "Interações" },
+  { to: "/courses", icon: BookOpen, label: "Cursos" },
 ];
 
 export const Sidebar = () => {
