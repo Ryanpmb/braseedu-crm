@@ -29,12 +29,24 @@ interface OpportunityDialogProps {
 
 export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportunities }: OpportunityDialogProps) => {
   const [formData, setFormData] = useState({
-    customerId: opportunity?.customerId || "",
-    salesmanId: opportunity?.salesmanId || "",
-    courseId: opportunity?.courseId || "",
-    status: opportunity?.status || "IN_PROGRESS",
-    finished_in: new Date()
+    customerId: opportunity?.customer.id || "",
+    salesmanId: opportunity?.salesman.id || "",
+    courseId: "",
+    salesStatus: "IN_PROGRESS",
+    finished_in: null
   });
+
+  useEffect(() => {
+    if (opportunity !== null && opportunity !== undefined) {
+      setFormData({
+        customerId: opportunity?.customer.id,
+        salesmanId: opportunity?.salesman.id,
+        courseId: opportunity?.course.id,
+        salesStatus: opportunity?.salesStatus,
+        finished_in: null
+      });
+    }
+  }, [opportunity]);
   const [customers, setCutomers] = useState([]);
   const [courses, setCourses] = useState([]);
   const [salesman, setSalesman] = useState([]);
@@ -90,7 +102,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
     }
 
     fetchData();
-  },[])
+  }, [])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -158,7 +170,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                   <SelectValue placeholder="Selecione o vendedor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {salesman.map((salesman) => (
+                  {salesman?.map((salesman) => (
                     <SelectItem key={salesman.id} value={salesman.id}>
                       {salesman.name}
                     </SelectItem>
@@ -171,8 +183,8 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
               <div className="grid gap-2">
                 <Label htmlFor="status">Status *</Label>
                 <Select
-                  value={formData.status}
-                  onValueChange={(value) => setFormData({ ...formData, status: value })}
+                  value={formData.salesStatus}
+                  onValueChange={(value) => setFormData({ ...formData, salesStatus: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />

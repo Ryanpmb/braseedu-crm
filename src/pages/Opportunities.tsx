@@ -115,7 +115,6 @@ const Opportunities = () => {
                     <TableHead>Curso</TableHead>
                     <TableHead>Vendedor</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Valor</TableHead>
                     <TableHead>Data Início</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
@@ -123,15 +122,14 @@ const Opportunities = () => {
                 <TableBody>
                   {opportunities.map((opp) => (
                     <TableRow key={opp.id}>
-                      <TableCell className="font-medium">{opp.customer}</TableCell>
-                      <TableCell className="text-muted-foreground">{opp.course}</TableCell>
-                      <TableCell className="text-muted-foreground">{opp.salesman}</TableCell>
+                      <TableCell className="font-medium">{opp?.customer?.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{opp?.course?.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{opp?.salesman?.name}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary" className={getStatusColor(opp.status)}>
-                          {opp.status}
+                        <Badge variant="secondary" className={getStatusColor(opp.salesStatus)}>
+                          {opp.salesStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-medium text-foreground">{opp.value}</TableCell>
                       <TableCell className="text-muted-foreground">
                         {new Date(opp.initiatedAt).toLocaleDateString('pt-BR')}
                       </TableCell>

@@ -6,19 +6,19 @@ export const api = axios.create({
     timeout: 10000,
 });
 
-// api.interceptors.response.use(
-//   async (response: AxiosResponse): Promise<AxiosResponse> => {
-//     return response;
-//   },
-//   async (error) => {
-//     if (error.response && error.response.status === 403) {
-//       localStorage.removeItem('token');
-//       window.location.href = '/';
-//     }
+api.interceptors.response.use(
+  async (response: AxiosResponse): Promise<AxiosResponse> => {
+    return response;
+  },
+  async (error) => {
+    if (error.response && error.response.status === 403) {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
 
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 api.interceptors.request.use(async (request: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     const token = localStorage.getItem('token');

@@ -116,8 +116,8 @@ const Customers = () => {
                       <TableCell className="text-muted-foreground">{customer.email}</TableCell>
                       <TableCell className="text-muted-foreground">{customer.phone}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary" className={getStatusColor(customer.status)}>
-                          {customer.status}
+                        <Badge variant="secondary" className={getStatusColor(customer.leadStatus)}>
+                          {customer.leadStatus}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{customer.origin}</TableCell>
