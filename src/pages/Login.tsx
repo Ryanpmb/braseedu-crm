@@ -16,27 +16,30 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const response = await api.post("auth/login", { email, password }, {
-      headers: {}
-    });
 
-    if (response.status === 200) {
-      response.data.token && localStorage.setItem("token", response.data.token);
 
-      toast({
-        title: "Login realizado",
-        description: "Bem-vindo ao sistema!",
-      });
-      navigate("/dashboard");
-      
-    } else {
+
+    try {
+      const response = await api.post("auth/login", { email, password });
+      if (response.status === 200) {
+        response.data.token && localStorage.setItem("token", response.data.token);
+
+        toast({
+          title: "Login realizado",
+          description: "Bem-vindo ao sistema!",
+        });
+        navigate("/dashboard");
+
+      }
+    } catch (error) {
       toast({
         title: "Erro no login",
         description: "Por favor, preencha todos os campos.",
         variant: "destructive",
       });
     }
+
+
   };
 
   return (

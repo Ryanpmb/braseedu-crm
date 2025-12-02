@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 interface InteractionDialogProps {
   open: boolean;
@@ -26,32 +27,37 @@ interface InteractionDialogProps {
   customerName?: string;
 }
 
-export const InteractionDialog = ({ 
-  open, 
-  onOpenChange, 
+export const InteractionDialog = ({
+  open,
+  onOpenChange,
   opportunityId,
-  customerName 
+  customerName
 }: InteractionDialogProps) => {
   const [formData, setFormData] = useState({
-    type: "Telefone",
+    type: "PHONE",
     description: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log("Interação registrada:", {
+
+    const response = await api.post('interations', {
       opportunityId,
       ...formData,
     });
-    
-    toast({
-      title: "Interação registrada!",
-      description: "A interação foi adicionada ao histórico do cliente.",
-    });
-    
-    onOpenChange(false);
-    setFormData({ type: "Telefone", description: "" });
+
+    if (response.status === 201) {
+      toast({
+        title: "Interação registrada!",
+        description: "A interação foi adicionada ao histórico do cliente.",
+      });
+
+      onOpenChange(false);
+      setFormData({ type: "PHONE", description: "" });
+    }
+
+
+
   };
 
   return (
@@ -60,7 +66,7 @@ export const InteractionDialog = ({
         <DialogHeader>
           <DialogTitle>Registrar Interação</DialogTitle>
           <DialogDescription>
-            {customerName 
+            {customerName
               ? `Registre uma nova interação com ${customerName}`
               : "Registre uma nova interação com o cliente"}
           </DialogDescription>
@@ -77,16 +83,15 @@ export const InteractionDialog = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Telefone">Telefone</SelectItem>
-                  <SelectItem value="Email">Email</SelectItem>
-                  <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-                  <SelectItem value="Reunião">Reunião</SelectItem>
-                  <SelectItem value="Visita">Visita</SelectItem>
-                  <SelectItem value="Outro">Outro</SelectItem>
+                  <SelectItem value="PHONE">Telefone</SelectItem>
+                  <SelectItem value="WHATSAPP">Email</SelectItem>
+                  <SelectItem value="EMAIL">WhatsApp</SelectItem>
+                  <SelectItem value="MEET">Reunião</SelectItem>
+                  <SelectItem value="OTHER">Outro</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="description">Descrição da Interação *</Label>
               <Textarea
@@ -99,7 +104,7 @@ export const InteractionDialog = ({
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar

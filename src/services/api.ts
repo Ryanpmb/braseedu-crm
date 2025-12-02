@@ -10,7 +10,8 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response && error.response.status === 403) {
+    const pathname = window.location.pathname;
+    if (error.response && error.response.status === 403 && pathname !== '/login') {
       localStorage.removeItem('token');
       window.location.href = '/';
     }

@@ -160,10 +160,6 @@ const Opportunities = () => {
                               <Edit className="w-4 h-4 mr-2" />
                               Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleChangeStatus(opp)}>
-                              <RefreshCw className="w-4 h-4 mr-2" />
-                              Alterar Status
-                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleAddInteraction(opp)}>
                               <MessageSquare className="w-4 h-4 mr-2" />
                               Registrar Interação
