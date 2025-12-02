@@ -41,7 +41,7 @@ export const InteractionDialog = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await api.post('interations', {
+    const response = await api.post('interation', {
       opportunityId,
       ...formData,
     });
@@ -84,8 +84,8 @@ export const InteractionDialog = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PHONE">Telefone</SelectItem>
-                  <SelectItem value="WHATSAPP">Email</SelectItem>
-                  <SelectItem value="EMAIL">WhatsApp</SelectItem>
+                  <SelectItem value="EMAIL">Email</SelectItem>
+                  <SelectItem value="WHATSAPP">WhatsApp</SelectItem>
                   <SelectItem value="MEET">Reunião</SelectItem>
                   <SelectItem value="OTHER">Outro</SelectItem>
                 </SelectContent>

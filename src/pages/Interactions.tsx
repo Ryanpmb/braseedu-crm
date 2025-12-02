@@ -3,60 +3,41 @@ import { Input } from "@/components/ui/input";
 import { Search, Phone, Mail, MessageSquare, Video } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 
 const Interactions = () => {
-  // Mock data
-  const interactions = [
-    { 
-      id: 1, 
-      customer: "João Silva", 
-      type: "Telefone", 
-      description: "Cliente interessado em curso de React. Agendada reunião para próxima semana.",
-      date: "2024-03-20",
-      salesman: "Maria Santos"
-    },
-    { 
-      id: 2, 
-      customer: "Ana Costa", 
-      type: "Email", 
-      description: "Enviada proposta comercial com valores e condições de pagamento.",
-      date: "2024-03-19",
-      salesman: "Pedro Lima"
-    },
-    { 
-      id: 3, 
-      customer: "Carlos Souza", 
-      type: "WhatsApp", 
-      description: "Respondidas dúvidas sobre cronograma e certificação do curso.",
-      date: "2024-03-19",
-      salesman: "Maria Santos"
-    },
-    { 
-      id: 4, 
-      customer: "Maria Santos", 
-      type: "Reunião", 
-      description: "Demonstração da plataforma de ensino e apresentação do conteúdo programático.",
-      date: "2024-03-18",
-      salesman: "Julia Costa"
-    },
-  ];
+  const [interactions, setInteractions] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('interation');
+
+      if (response.status === 200) {
+        setInteractions(response.data);
+      }
+    }
+
+    fetchData();
+  }, [])
+
 
   const getTypeIcon = (type: string) => {
     const icons: Record<string, any> = {
-      "Telefone": Phone,
-      "Email": Mail,
-      "WhatsApp": MessageSquare,
-      "Reunião": Video,
+      "PHONE": Phone,
+      "EMAIL": Mail,
+      "WHATSAPP": MessageSquare,
+      "MEET": Video,
     };
     return icons[type] || MessageSquare;
   };
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      "Telefone": "bg-info/10 text-info",
-      "Email": "bg-primary/10 text-primary",
-      "WhatsApp": "bg-success/10 text-success",
-      "Reunião": "bg-warning/10 text-warning",
+      "PHONE": "bg-info/10 text-info",
+      "EMAIL": "bg-primary/10 text-primary",
+      "WHATSAPP": "bg-success/10 text-success",
+      "MEET": "bg-warning/10 text-warning",
     };
     return colors[type] || "bg-muted text-muted-foreground";
   };
@@ -94,9 +75,9 @@ const Interactions = () => {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="font-semibold text-foreground">{interaction.customer}</h3>
+                          <h3 className="font-semibold text-foreground">{interaction.oportunity.customer.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {interaction.salesman} • {new Date(interaction.date).toLocaleDateString('pt-BR')}
+                            {interaction.oportunity.salesman.name} • {new Date(interaction.interationDate).toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                         <Badge variant="secondary" className={getTypeColor(interaction.type)}>
