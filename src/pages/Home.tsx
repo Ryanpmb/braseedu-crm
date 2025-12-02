@@ -95,7 +95,7 @@ const Home = () => {
           <p className="text-muted-foreground mb-8">
             Junte-se a milhares de alunos que já transformaram suas carreiras
           </p>
-          <Button size="lg" onClick={() => navigate("/courses")}>
+          <Button size="lg" onClick={() => navigate("/courses-public")}>
             Explorar Cursos
           </Button>
         </div>

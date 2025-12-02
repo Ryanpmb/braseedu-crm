@@ -1,5 +1,4 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { error } from 'console';
 
 export const api = axios.create({
     baseURL: 'http://localhost:8080/',
