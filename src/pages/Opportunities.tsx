@@ -63,15 +63,30 @@ const Opportunities = () => {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      "Contato Inicial": "bg-info/10 text-info",
-      "Qualificado": "bg-primary/10 text-primary",
-      "Proposta Enviada": "bg-warning/10 text-warning",
-      "Em Negociação": "bg-warning/10 text-warning",
-      "Fechado Ganho": "bg-success/10 text-success",
-      "Fechado Perdido": "bg-destructive/10 text-destructive",
+      "PROGRESS": "bg-warning/10 text-warning",
+      "WON": "bg-success/10 text-success",
+      "LOSE": "bg-destructive/10 text-destructive",
     };
     return colors[status] || "bg-muted text-muted-foreground";
   };
+
+  const getStatusName = (status: string): string => {
+    let treatyStatus = "";
+
+    switch (status) {
+      case "WON":
+        treatyStatus = "Ganho";
+        break;
+      case "LOSE":
+        treatyStatus = "Perdido";
+        break;
+      case "PROGRESS":
+        treatyStatus = "Em Progresso"
+        break;
+
+    }
+    return treatyStatus;
+  }
 
   return (
     <DashboardLayout>
@@ -127,7 +142,7 @@ const Opportunities = () => {
                       <TableCell className="text-muted-foreground">{opp?.salesman?.name}</TableCell>
                       <TableCell>
                         <Badge variant="secondary" className={getStatusColor(opp.salesStatus)}>
-                          {opp.salesStatus}
+                          {getStatusName(opp.salesStatus)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">

@@ -96,9 +96,9 @@ export default function Courses() {
         });
         setIsDialogOpen(false);
       }
-      
+
     }
-    
+
   };
 
   return (
@@ -118,58 +118,61 @@ export default function Courses() {
         </div>
 
         <div className="rounded-lg border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Nível</TableHead>
-                <TableHead>Duração</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {courses.map((course) => (
-                <TableRow key={course.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{course.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {course.description}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{course.name}</TableCell>
-                  <TableCell>{course.description}</TableCell>
-                  <TableCell>{course.hourlyLoad + 'h'}</TableCell>
-                  <TableCell>R$ {course.value.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(course)}>
-                          <Pencil className="w-4 h-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(course.id)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Excluir
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+          {courses.length !== 0 ?
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead>Nível</TableHead>
+                  <TableHead>Duração</TableHead>
+                  <TableHead>Preço</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {courses.map((course) => (
+                  <TableRow key={course.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{course.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {course.description}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{course.name}</TableCell>
+                    <TableCell>{course.description}</TableCell>
+                    <TableCell>{course.hourlyLoad + 'h'}</TableCell>
+                    <TableCell>R$ {course.value.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(course)}>
+                            <Pencil className="w-4 h-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(course.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table> :
+            <h1 className="p-4 text-blue-500 text-lg font-bold">Nenhum Curso Encontrado!</h1>
+          }
         </div>
       </div>
 

@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -32,7 +31,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
     customerId: opportunity?.customer.id || "",
     salesmanId: opportunity?.salesman.id || "",
     courseId: "",
-    salesStatus: "IN_PROGRESS",
+    salesStatus: "PROGRESS",
     finished_in: null
   });
 
@@ -47,6 +46,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
       });
     }
   }, [opportunity]);
+
   const [customers, setCutomers] = useState([]);
   const [courses, setCourses] = useState([]);
   const [salesman, setSalesman] = useState([]);
@@ -58,9 +58,9 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
       await api.put(`oportunity/${opportunity.id}`, formData) :
       await api.post('oportunity', formData);
 
-    if (response.status === 201) {
-
-      if (opportunity) {
+    if (response.status === 201 || response.status === 200) {
+      console.log(opportunity);
+      if (opportunity !== null) {
         const updateOpportunity = response.data;
         opportunities.map((op) => {
           op.id === updateOpportunity.id ?
@@ -151,7 +151,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                 </SelectTrigger>
                 <SelectContent>
                   {courses.map((course) => (
-                    <SelectItem key={course.id} value={course.id}>
+                    <SelectItem key={course.id} value={String(course.id)}>
                       {course.name}
                     </SelectItem>
                   ))}
@@ -190,7 +190,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="IN_PROGRESS">Em Negociação</SelectItem>
+                    <SelectItem value="PROGRESS">Em Negociação</SelectItem>
                     <SelectItem value="WON">Fechado Ganho</SelectItem>
                     <SelectItem value="LOSE">Fechado Perdido</SelectItem>
                   </SelectContent>
