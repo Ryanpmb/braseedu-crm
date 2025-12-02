@@ -140,6 +140,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                 value={formData.customerId}
                 onValueChange={(value) => setFormData({ ...formData, customerId: value })}
                 required
+                disabled={opportunity}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o cliente" />
@@ -160,6 +161,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                 value={formData.courseId}
                 onValueChange={(value) => setFormData({ ...formData, courseId: value })}
                 required
+                 disabled={opportunity}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o curso" />
