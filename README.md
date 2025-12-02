@@ -9,7 +9,7 @@ controle dos leads gerados.
 Para o desenvolvimento do projeto, foram usadas as seguintes tecnologias:
   
 - React (19.2.0)
-- Vite (5.3.10)
+- Vite (5.4.19)
 
 Repositório do back-end: https://github.com/Ryanpmb/Projeto-CRM-BrasEdu.git 
 
