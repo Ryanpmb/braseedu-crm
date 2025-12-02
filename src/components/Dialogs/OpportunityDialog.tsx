@@ -28,8 +28,8 @@ interface OpportunityDialogProps {
 
 export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportunities }: OpportunityDialogProps) => {
   const [formData, setFormData] = useState({
-    customerId: opportunity?.customer.id || "",
-    salesmanId: opportunity?.salesman.id || "",
+    customerId: "",
+    salesmanId: "",
     courseId: "",
     salesStatus: "PROGRESS",
     finished_in: null
@@ -67,9 +67,24 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
             { ...opportunity, updateOpportunity } :
             op
         })
+
+        setFormData({
+          customerId: "",
+          salesmanId: "",
+          courseId: "",
+          salesStatus: "PROGRESS",
+          finished_in: null
+        });
       } else {
         const newOportunity = response.data;
         opportunities.push(newOportunity);
+        setFormData({
+          customerId: "",
+          salesmanId: "",
+          courseId: "",
+          salesStatus: "PROGRESS",
+          finished_in: null
+        });
       }
 
       toast({
