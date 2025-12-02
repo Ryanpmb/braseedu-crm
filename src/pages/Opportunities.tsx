@@ -189,14 +189,6 @@ const Opportunities = () => {
         opportunities={opportunities}
       />
 
-      <StatusDialog
-        open={statusDialogOpen}
-        onOpenChange={setStatusDialogOpen}
-        currentStatus={selectedOpportunity?.status || ""}
-        entityType="opportunity"
-        onStatusChange={handleStatusChange}
-      />
-
       <InteractionDialog
         open={interactionDialogOpen}
         onOpenChange={setInteractionDialogOpen}
