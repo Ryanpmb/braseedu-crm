@@ -8,9 +8,8 @@ controle dos leads gerados.
 ## 🌐 Tecnologias Utilizadas
 Para o desenvolvimento do projeto, foram usadas as seguintes tecnologias:
   
-- Java (Java 21, Spring Boot, JPA, SQL Server Driver (JDBC), Spring Security, JWT (JSON Web Token), Maven, Lombok, Bean Validation) 
-- Microsoft SQL Server (Versão 2019)
-- Docker
+- React (19.2.0)
+- Vite (5.3.10)
 
 Repositório do back-end: https://github.com/Ryanpmb/Projeto-CRM-BrasEdu.git 
 
@@ -28,7 +27,7 @@ Para rodar o projeto localmente, você precisará ter o **Node** instalado.
 3.  **Inicie a Interface:**
     ```bash
     npm run dev
-    ``
+    ```
 4.  A API estará disponível em: `http://localhost:8081`
 5.  Consulte o README do back-end para poder iniciar o mesmo.
 
