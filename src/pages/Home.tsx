@@ -53,9 +53,6 @@ const Home = () => {
             Plataforma completa de cursos online para impulsionar seu desenvolvimento profissional
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Button size="lg" onClick={() => navigate("/courses")}>
-              Ver Cursos
-            </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/login")}>
               Área do Cliente
             </Button>

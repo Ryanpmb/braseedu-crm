@@ -24,7 +24,6 @@ import { api } from "@/services/api";
 
 const Customers = () => {
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
-  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [customers, setCustomers] = useState([]);
 
@@ -42,22 +41,32 @@ const Customers = () => {
     setCustomerDialogOpen(true);
   };
 
-  const handleChangeStatus = (customer: any) => {
-    setSelectedCustomer(customer);
-    setStatusDialogOpen(true);
-  };
+  const getStatusName = (status: string): string => {
+    let treatyStatus = "";
 
-  const handleStatusChange = (newStatus: string, notes?: string) => {
-    console.log("Status atualizado:", { customerId: selectedCustomer?.id, newStatus, notes });
-    // Aqui você atualizaria o status via API
-  };
+    switch (status) {
+      case "NEW":
+        treatyStatus = "Novo Lead";
+        break;
+      case "WON":
+        treatyStatus = "Ganho";
+        break;
+      case "LOSE":
+        treatyStatus = "Perdido";
+        break;
+      case "iN_PROGRESS":
+        treatyStatus = "Em Progresso"
+        break;
+    }
+    return treatyStatus;
+  }
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      "Qualificado": "bg-success/10 text-success",
-      "Novo Lead": "bg-info/10 text-info",
-      "Em Negociação": "bg-warning/10 text-warning",
-      "Perdido": "bg-destructive/10 text-destructive",
+      "WON": "bg-success/10 text-success",
+      "NEW": "bg-info/10 text-info",
+      "iN_PROGRESS": "bg-warning/10 text-warning",
+      "LOSE": "bg-destructive/10 text-destructive",
     };
     return colors[status] || "bg-muted text-muted-foreground";
   };
@@ -117,7 +126,7 @@ const Customers = () => {
                       <TableCell className="text-muted-foreground">{customer.phone}</TableCell>
                       <TableCell>
                         <Badge variant="secondary" className={getStatusColor(customer.leadStatus)}>
-                          {customer.leadStatus}
+                          {getStatusName(customer.leadStatus)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{customer.origin}</TableCell>

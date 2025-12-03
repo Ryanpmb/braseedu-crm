@@ -110,7 +110,7 @@ const CourseDetail = () => {
         <div className="max-w-4xl mx-auto">
           <Button
             variant="ghost"
-            onClick={() => navigate("/courses")}
+            onClick={() => navigate("/courses-public")}
             className="mb-4"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />

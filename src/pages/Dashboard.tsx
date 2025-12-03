@@ -2,8 +2,46 @@ import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { MetricCard } from "@/components/Dashboard/MetricCard";
 import { Users, Target, DollarSign, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 
 const Dashboard = () => {
+  const [customers, setCustomers] = useState([])
+  const [opportunities, setOpportunities] = useState([]);
+  const [sales, setSales] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/sales');
+
+      if (response.status === 200) {
+        setSales(response.data);
+      }
+    }
+
+    fetchData();
+  }, [])
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('oportunity');
+      if (response.status === 200) {
+        setOpportunities(response.data);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/customers');
+      setCustomers(response.data)
+    }
+
+    fetchData()
+  }, []);
   // Mock data - substituir por dados reais da API
   const metrics = {
     totalCustomers: 1247,
@@ -31,30 +69,30 @@ const Dashboard = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Total de Clientes"
-            value={metrics.totalCustomers}
+            value={customers.length}
             icon={Users}
             trend={{ value: "+12% esse mês", isPositive: true }}
             variant="info"
           />
           <MetricCard
             title="Oportunidades Ativas"
-            value={metrics.activeOpportunities}
+            value={opportunities.length}
             icon={Target}
             trend={{ value: "+8% essa semana", isPositive: true }}
             variant="warning"
           />
           <MetricCard
             title="Vendas do Mês"
-            value={metrics.monthSales}
+            value={sales.length}
             icon={DollarSign}
             trend={{ value: "+18% vs mês anterior", isPositive: true }}
             variant="success"
           />
           <MetricCard
             title="Taxa de Conversão"
-            value={metrics.conversionRate}
+            value={Math.round(sales.length / opportunities.length * 100) + '%'}
             icon={TrendingUp}
-            trend={{ value: "+2.1% esse mês", isPositive: true }}
+            trend={{ value: "+2.1% e sse mês", isPositive: true }}
             variant="default"
           />
         </div>
@@ -66,20 +104,20 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentOpportunities.map((opp) => (
-                  <div 
+                {opportunities.map((opp) => (
+                  <div
                     key={opp.id}
                     className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors"
                   >
                     <div>
-                      <p className="font-medium text-foreground">{opp.customer}</p>
-                      <p className="text-sm text-muted-foreground">{opp.course}</p>
+                      <p className="font-medium text-foreground">{opp.customer.name}</p>
+                      <p className="text-sm text-muted-foreground">{opp.course.name}</p>
                     </div>
                     <div className="text-right">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                         {opp.status}
                       </span>
-                      <p className="text-xs text-muted-foreground mt-1">{opp.salesman}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{opp.salesman.name}</p>
                     </div>
                   </div>
                 ))}
@@ -106,7 +144,7 @@ const Dashboard = () => {
                       <span className="text-sm text-muted-foreground">{stage.count}</span>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-primary rounded-full h-2 transition-all"
                         style={{ width: `${stage.percentage}%` }}
                       />

@@ -20,7 +20,7 @@ const Sales = () => {
     const fetchData = async () => {
       const response = await api.get('/sales');
 
-      if(response.status === 200){
+      if (response.status === 200) {
         setSales(response.data);
       }
     }
@@ -30,12 +30,52 @@ const Sales = () => {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      "Concluída": "bg-success/10 text-success",
-      "Pendente": "bg-warning/10 text-warning",
-      "Cancelada": "bg-destructive/10 text-destructive",
+      "WON": "bg-success/10 text-success",
+      "PROGRESS": "bg-warning/10 text-warning",
+      "LOSE": "bg-destructive/10 text-destructive",
     };
     return colors[status] || "bg-muted text-muted-foreground";
   };
+
+  const getStatusName = (status: string): string => {
+    let treatyStatus = "";
+
+    switch (status) {
+      case "WON":
+        treatyStatus = "Vendido";
+        break;
+      case "LOSE":
+        treatyStatus = "Perdido";
+        break;
+      case "PROGRESS":
+        treatyStatus = "Em Progresso"
+        break;
+
+    }
+    return treatyStatus;
+  }
+
+  const getPaymentMethodName = (paymentMethod: string) => {
+    let treatyPaymentMethod = "";
+
+    switch (paymentMethod) {
+      case "PIX":
+        treatyPaymentMethod = "Pix";
+        break;
+      case "DEBIT_CARD":
+        treatyPaymentMethod = "Cartçao de Débito";
+        break;
+      case "CREDIT_CARD":
+        treatyPaymentMethod = "Cartão de Crédito"
+        break;
+      case "MONEY":
+        treatyPaymentMethod = "Dinheiro"
+        break;
+
+    }
+
+    return treatyPaymentMethod;
+  }
 
   return (
     <DashboardLayout>
@@ -72,16 +112,16 @@ const Sales = () => {
             <TableBody>
               {sales.map((sale) => (
                 <TableRow key={sale.id} className="cursor-pointer hover:bg-muted/50">
-                  <TableCell className="font-medium">{sale.customer}</TableCell>
-                  <TableCell className="text-muted-foreground">{sale.course}</TableCell>
-                  <TableCell className="font-medium text-foreground">{sale.value}</TableCell>
-                  <TableCell className="text-muted-foreground">{sale.paymentMethod}</TableCell>
+                  <TableCell className="font-medium">{sale.oportunity.customer.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{sale.oportunity.course.name}</TableCell>
+                  <TableCell className="font-medium text-foreground">{sale.finalValue.toFixed(2)}</TableCell>
+                  <TableCell className="text-muted-foreground">{getPaymentMethodName(sale.paymentMethod)}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {new Date(sale.soldAt).toLocaleDateString('pt-BR')}
+                    {new Date(sale.sold_in).toLocaleDateString('pt-BR')}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className={getStatusColor(sale.status)}>
-                      {sale.status}
+                    <Badge variant="secondary" className={getStatusColor(sale.salesStatus)}>
+                      {getStatusName(sale.salesStatus)}
                     </Badge>
                   </TableCell>
                 </TableRow>
