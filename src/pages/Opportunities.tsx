@@ -25,7 +25,6 @@ import { api } from "@/services/api";
 
 const Opportunities = () => {
   const [opportunityDialogOpen, setOpportunityDialogOpen] = useState(false);
-  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [interactionDialogOpen, setInteractionDialogOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<any>(null);
   const [opportunities, setOpportunities] = useState([]);
@@ -47,19 +46,12 @@ const Opportunities = () => {
     setOpportunityDialogOpen(true);
   };
 
-  const handleChangeStatus = (opportunity: any) => {
-    setSelectedOpportunity(opportunity);
-    setStatusDialogOpen(true);
-  };
 
   const handleAddInteraction = (opportunity: any) => {
     setSelectedOpportunity(opportunity);
     setInteractionDialogOpen(true);
   };
 
-  const handleStatusChange = (newStatus: string, notes?: string) => {
-    console.log("Status atualizado:", { opportunityId: selectedOpportunity?.id, newStatus, notes });
-  };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {

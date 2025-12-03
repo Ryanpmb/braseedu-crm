@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,41 +6,24 @@ import { Plus, Search, Edit } from "lucide-react";
 import { SalesmanDialog } from "@/components/Dialogs/SalesmanDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { api } from "@/services/api";
 
 const Salesmen = () => {
   const [salesmanDialogOpen, setSalesmanDialogOpen] = useState(false);
   const [selectedSalesman, setSelectedSalesman] = useState<any>(null);
+  const [salesmans, setSalesmans] = useState([]);
 
-  // Mock data
-  const salesmen = [
-    { 
-      id: "1", 
-      name: "Maria Santos", 
-      email: "maria@brasedu.com", 
-      department: "Vendas Online",
-      activeOpportunities: 12,
-      closedSales: 45,
-      conversionRate: "28%"
-    },
-    { 
-      id: "2", 
-      name: "Pedro Lima", 
-      email: "pedro@brasedu.com", 
-      department: "Vendas Presencial",
-      activeOpportunities: 8,
-      closedSales: 32,
-      conversionRate: "24%"
-    },
-    { 
-      id: "3", 
-      name: "Julia Costa", 
-      email: "julia@brasedu.com", 
-      department: "Vendas Online",
-      activeOpportunities: 15,
-      closedSales: 58,
-      conversionRate: "31%"
-    },
-  ];
+  useEffect(()=>{
+    const fetchData = async () => {
+      const response = await api.get('/salesman')
+
+      if(response.status === 200){
+        setSalesmans(response.data);
+      }
+    }
+
+    fetchData();
+  }, [])
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -84,7 +67,7 @@ const Salesmen = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {salesmen.map((salesman) => (
+          {salesmans.map((salesman) => (
             <Card key={salesman.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -116,7 +99,7 @@ const Salesmen = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Oportunidades Ativas:</span>
-                    <span className="text-sm font-bold text-primary">{salesman.activeOpportunities}</span>
+                    <span className="text-sm font-bold text-primary">{salesman.opportunitiesQuantities}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Vendas Fechadas:</span>
@@ -124,7 +107,7 @@ const Salesmen = () => {
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t">
                     <span className="text-sm text-muted-foreground">Taxa de Conversão:</span>
-                    <span className="text-sm font-bold text-foreground">{salesman.conversionRate}</span>
+                    <span className="text-sm font-bold text-foreground">{salesman.closedSales / salesman.opportunitiesQuantities || 0}</span>
                   </div>
                 </div>
               </CardContent>
@@ -137,6 +120,7 @@ const Salesmen = () => {
         open={salesmanDialogOpen} 
         onOpenChange={setSalesmanDialogOpen}
         salesman={selectedSalesman}
+        salesmans={salesmans}
       />
     </DashboardLayout>
   );

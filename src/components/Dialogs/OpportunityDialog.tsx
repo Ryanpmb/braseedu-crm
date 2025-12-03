@@ -32,6 +32,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
     salesmanId: "",
     courseId: "",
     salesStatus: "PROGRESS",
+    paymentMethod: "PIX",
     finished_in: null
   });
 
@@ -42,10 +43,26 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
         salesmanId: opportunity?.salesman.id,
         courseId: opportunity?.course.id,
         salesStatus: opportunity?.salesStatus,
+        paymentMethod: opportunity?.paymentMethod,
+        finished_in: null
+      });
+    } else {
+
+      setFormData({
+        customerId: "",
+        salesmanId: "",
+        courseId: "",
+        salesStatus: "PROGRESS",
+        paymentMethod: "PIX",
         finished_in: null
       });
     }
-  }, [opportunity]);
+
+
+
+  }, [opportunity, open]);
+
+
 
   const [customers, setCutomers] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -59,7 +76,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
       await api.post('oportunity', formData);
 
     if (response.status === 201 || response.status === 200) {
-      console.log(opportunity);
+
       if (opportunity !== null) {
         const updateOpportunity = response.data;
         opportunities.map((op) => {
@@ -73,6 +90,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
           salesmanId: "",
           courseId: "",
           salesStatus: "PROGRESS",
+          paymentMethod: "PIX",
           finished_in: null
         });
       } else {
@@ -83,6 +101,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
           salesmanId: "",
           courseId: "",
           salesStatus: "PROGRESS",
+          paymentMethod: "PIX",
           finished_in: null
         });
       }
@@ -161,7 +180,7 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                 value={formData.courseId}
                 onValueChange={(value) => setFormData({ ...formData, courseId: value })}
                 required
-                 disabled={opportunity}
+                disabled={opportunity}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o curso" />
@@ -210,6 +229,26 @@ export const OpportunityDialog = ({ open, onOpenChange, opportunity, opportuniti
                     <SelectItem value="PROGRESS">Em Negociação</SelectItem>
                     <SelectItem value="WON">Fechado Ganho</SelectItem>
                     <SelectItem value="LOSE">Fechado Perdido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="status">Forma de Pagamento *</Label>
+                <Select
+                  value={formData.paymentMethod}
+                  onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PIX">Pix</SelectItem>
+                    <SelectItem value="CREDIT_CARD">Cartão Crédito</SelectItem>
+                    <SelectItem value="DEBIT_CARD">Cartão Débito</SelectItem>
+                    <SelectItem value="MONEY">Dinheiro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,27 +18,41 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 interface SalesmanDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   salesman?: any;
+  salesmans?: any[];
 }
 
-export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogProps) => {
+export const SalesmanDialog = ({ open, onOpenChange, salesman, salesmans }: SalesmanDialogProps) => {
   const [formData, setFormData] = useState({
-    name: salesman?.name || "",
-    email: salesman?.email || "",
-    phone: salesman?.phone || "",
-    birthDate: salesman?.birthDate || "",
-    department: salesman?.department || "",
+    name: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    department: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    setFormData({
+      name: salesman?.name,
+      email: salesman?.email,
+      phone: salesman?.phone,
+      birthDate: salesman?.birthDate,
+      department: salesman?.departament,
+      password: "",
+      confirmPassword: "",
+    });
+  }, [salesman])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!salesman && formData.password !== formData.confirmPassword) {
       toast({
         title: "Erro",
@@ -47,17 +61,38 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
       });
       return;
     }
-    
-    console.log("Dados do vendedor:", formData);
-    
-    toast({
-      title: salesman ? "Vendedor atualizado!" : "Vendedor criado!",
-      description: salesman 
-        ? "As informações do vendedor foram atualizadas."
-        : "Novo vendedor adicionado à equipe.",
-    });
-    
-    onOpenChange(false);
+
+    const response = salesman ?
+      await api.put(`/salesman/${salesman.id}`, formData) :
+      await api.post('/salesman', formData);
+
+    if (response.status === 200) {
+      if (salesman) {
+        const updatedSalesman = response.data;
+
+        salesmans.map((sm) => {
+          sm.id === updatedSalesman.id ?
+            { ...sm, updatedSalesman } :
+            sm
+        })
+      } else {
+        const updatedSalesman = response.data;
+        salesmans.push(updatedSalesman);
+      }
+
+      toast({
+        title: salesman ? "Vendedor atualizado!" : "Vendedor criado!",
+        description: salesman
+          ? "As informações do vendedor foram atualizadas."
+          : "Novo vendedor adicionado à equipe.",
+      });
+
+      onOpenChange(false);
+
+    }
+
+
+
   };
 
   return (
@@ -68,7 +103,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
             {salesman ? "Editar Vendedor" : "Novo Vendedor"}
           </DialogTitle>
           <DialogDescription>
-            {salesman 
+            {salesman
               ? "Atualize as informações do vendedor."
               : "Adicione um novo vendedor à equipe."}
           </DialogDescription>
@@ -85,7 +120,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                 required
               />
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="email">Email *</Label>
               <Input
@@ -97,7 +132,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="phone">Telefone *</Label>
@@ -109,7 +144,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                   required
                 />
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="birthDate">Data de Nascimento</Label>
                 <Input
@@ -120,7 +155,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                 />
               </div>
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="department">Departamento *</Label>
               <Select
@@ -138,7 +173,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                 </SelectContent>
               </Select>
             </div>
-            
+
             {!salesman && (
               <>
                 <div className="grid gap-2">
@@ -153,7 +188,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
                     minLength={6}
                   />
                 </div>
-                
+
                 <div className="grid gap-2">
                   <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
                   <Input
@@ -169,7 +204,7 @@ export const SalesmanDialog = ({ open, onOpenChange, salesman }: SalesmanDialogP
               </>
             )}
           </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar

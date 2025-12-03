@@ -10,14 +10,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 
 const Sales = () => {
-  // Mock data
-  const sales = [
-    { id: 1, customer: "João Silva", course: "React Avançado", value: "R$ 2.500", paymentMethod: "Cartão de Crédito", soldAt: "2024-03-15", status: "Concluída" },
-    { id: 2, customer: "Ana Costa", course: "Node.js", value: "R$ 1.800", paymentMethod: "PIX", soldAt: "2024-03-18", status: "Concluída" },
-    { id: 3, customer: "Maria Santos", course: "Python", value: "R$ 2.200", paymentMethod: "Boleto", soldAt: "2024-03-20", status: "Pendente" },
-  ];
+  const [sales, setSales] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/sales');
+
+      if(response.status === 200){
+        setSales(response.data);
+      }
+    }
+
+    fetchData();
+  }, [])
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
