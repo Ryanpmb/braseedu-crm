@@ -42,6 +42,11 @@ const Interactions = () => {
     return colors[type] || "bg-muted text-muted-foreground";
   };
 
+  function toLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -77,7 +82,7 @@ const Interactions = () => {
                         <div>
                           <h3 className="font-semibold text-foreground">{interaction.oportunity.customer.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {interaction.oportunity.salesman.name} • {new Date(interaction.interationDate).toLocaleDateString('pt-BR')}
+                            {interaction.oportunity.salesman.name} • {toLocalDate(interaction.interationDate).toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                         <Badge variant="secondary" className={getTypeColor(interaction.type)}>
