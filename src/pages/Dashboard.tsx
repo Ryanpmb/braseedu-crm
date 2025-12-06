@@ -4,6 +4,7 @@ import { Users, Target, DollarSign, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { api } from "@/services/api";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const [customers, setCustomers] = useState([])
@@ -42,20 +43,27 @@ const Dashboard = () => {
 
     fetchData()
   }, []);
-  // Mock data - substituir por dados reais da API
-  const metrics = {
-    totalCustomers: 1247,
-    activeOpportunities: 89,
-    monthSales: 156,
-    conversionRate: "23.4%",
-  };
 
-  const recentOpportunities = [
-    { id: 1, customer: "João Silva", course: "React Avançado", status: "Em Negociação", salesman: "Maria Santos" },
-    { id: 2, customer: "Ana Costa", course: "Node.js", status: "Proposta Enviada", salesman: "Pedro Lima" },
-    { id: 3, customer: "Carlos Souza", course: "Python", status: "Contato Inicial", salesman: "Maria Santos" },
-  ];
+  const getCsv = async () => {
 
+    const response = await api.get('export/customers', {
+      responseType: 'blob'
+    });
+
+    if (response.status !== 200) {
+      alert("Erro ao exportar CSV");
+      return;
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "customers_courses.csv";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -155,6 +163,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Button onClick={() => getCsv()}>
+          Exportar métricas csv
+        </Button>
       </div>
     </DashboardLayout>
   );
