@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Users, 
@@ -6,9 +6,12 @@ import {
   DollarSign, 
   UserCircle,
   MessageSquare,
-  BookOpen
+  BookOpen,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+const navigate = useNavigate();
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -19,6 +22,11 @@ const navItems = [
   { to: "/interactions", icon: MessageSquare, label: "Interações" },
   { to: "/courses", icon: BookOpen, label: "Cursos" },
 ];
+
+const logOut = () => {
+  localStorage.removeItem('token');
+  navigate('/');
+}
 
 export const Sidebar = () => {
   return (
@@ -51,6 +59,9 @@ export const Sidebar = () => {
             </NavLink>
           ))}
         </nav>
+        <Button onClick={() => logOut()}>
+          Logout <LogOut/>
+        </Button>
       </div>
     </aside>
   );

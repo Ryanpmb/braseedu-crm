@@ -62,6 +62,12 @@ const Opportunities = () => {
     return colors[status] || "bg-muted text-muted-foreground";
   };
 
+  function toLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+
   const getStatusName = (status: string): string => {
     let treatyStatus = "";
 
@@ -138,7 +144,7 @@ const Opportunities = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {new Date(opp.initiatedAt).toLocaleDateString('pt-BR')}
+                        {toLocalDate(opp.initiatedAt).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

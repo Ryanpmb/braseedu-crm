@@ -114,7 +114,6 @@ const Customers = () => {
                     <TableHead>Telefone</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Origem</TableHead>
-                    <TableHead>Cadastro</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -130,9 +129,6 @@ const Customers = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{customer.origin}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(customer.birthDate).toLocaleDateString('pt-BR')}
-                      </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
