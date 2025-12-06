@@ -119,7 +119,6 @@ const Customers = () => {
                     <TableHead>Telefone</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Origem</TableHead>
-                    <TableHead>Cadastro</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
