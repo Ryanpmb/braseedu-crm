@@ -71,6 +71,11 @@ const Customers = () => {
     return colors[status] || "bg-muted text-muted-foreground";
   };
 
+  function toLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -131,7 +136,7 @@ const Customers = () => {
                       </TableCell>
                       <TableCell className="text-muted-foreground">{customer.origin}</TableCell>
                       <TableCell className="text-muted-foreground">
-                        {new Date(customer.birthDate).toLocaleDateString('pt-BR')}
+                        {toLocalDate(customer.birthDate).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

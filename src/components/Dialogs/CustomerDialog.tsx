@@ -125,7 +125,7 @@ export const CustomerDialog = ({ open, onOpenChange, customer, customers }: Cust
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="birthDate">Data de Nascimento</Label>
+                <Label htmlFor="birthDate">Data de Cadastro</Label>
                 <Input
                   id="birthDate"
                   type="date"
