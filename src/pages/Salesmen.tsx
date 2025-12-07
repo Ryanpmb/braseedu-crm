@@ -107,7 +107,9 @@ const Salesmen = () => {
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t">
                     <span className="text-sm text-muted-foreground">Taxa de Conversão:</span>
-                    <span className="text-sm font-bold text-foreground">{Math.round(salesman.closedSales / salesman.opportunitiesQuantities * 100) + '%' || 0}</span>
+                    <span className="text-sm font-bold text-foreground">{salesman.opportunitiesQuantities > 0
+                                                                          ? Math.round(salesman.closedSales / salesman.opportunitiesQuantities * 100) + '%'
+                                                                          : '0%'}</span>
                   </div>
                 </div>
               </CardContent>

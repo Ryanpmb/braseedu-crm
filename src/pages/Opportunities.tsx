@@ -80,6 +80,11 @@ const Opportunities = () => {
     return treatyStatus;
   }
 
+  function toLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -138,7 +143,7 @@ const Opportunities = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {new Date(opp.initiatedAt).toLocaleDateString('pt-BR')}
+                        {toLocalDate(opp.initiatedAt).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

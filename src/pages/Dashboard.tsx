@@ -98,7 +98,10 @@ const Dashboard = () => {
           />
           <MetricCard
             title="Taxa de Conversão"
-            value={Math.round(sales.length / opportunities.length * 100) + '%'}
+            value={opportunities.length > 0
+                    ? Math.round(sales.length / opportunities.length * 100) + '%'
+                    : '0%'
+                  }
             icon={TrendingUp}
             trend={{ value: "+2.1% e sse mês", isPositive: true }}
             variant="default"
